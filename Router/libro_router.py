@@ -3,8 +3,8 @@ from fastapi import Depends
 from fastapi import status
 from fastapi import Body
 
-from Schema import usuario_schema
-from Service import usuario_service
+from Schema import libro_schema
+from Service import libro_service
 
 from utils.db import get_db
 
@@ -12,13 +12,13 @@ from utils.db import get_db
 router = APIRouter(prefix="/PROYECTO-FINAL")
 # declaramos el tipo del endpont en este caso post metadatos para el swugguer
 @router.post(
-    "/user/",
+    "/libro/",
     # agrupacion en la documentacion
-    tags=["users"],
+    tags=["Libros"],
     # codigo de devolucion cuando se efectua corectamente
     status_code=status.HTTP_201_CREATED,
     # indicamos el modelo de respuesta
-    response_model=usuario_schema.User,
+    response_model=libro_schema.Libro,
     # indicamos la conexion con la base de datos
      dependencies=[Depends(get_db)],
     # informacion de lo que hace el endpont
@@ -26,7 +26,7 @@ router = APIRouter(prefix="/PROYECTO-FINAL")
 )
 
 # funcion de el endpoint indicamos que es necesario recibir el modelo de en forma del cuerpo dela peticion
-def create_user(user: usuario_schema.UserRegister = Body(...)):
+def create_user(book: libro_schema.LibroBase = Body(...)):
     # description del endpoint para la el swugguer
     """
     ## Crear un nuevo usuario
@@ -40,4 +40,4 @@ def create_user(user: usuario_schema.UserRegister = Body(...)):
     ### Returns
     - Los datos del usuario 
     """
-    return usuario_service.create_user(user)
+    return libro_service.create_book(book)

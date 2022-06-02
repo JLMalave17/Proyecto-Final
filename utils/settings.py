@@ -4,7 +4,7 @@ from pydantic import BaseSettings
 from dotenv import load_dotenv
 load_dotenv()
 
-
+# clase para leer las variables de entorno del archivo .env
 class Settings(BaseSettings):
 
     db_name: str = os.getenv('DB_NAME')
