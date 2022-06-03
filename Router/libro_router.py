@@ -22,14 +22,14 @@ router = APIRouter(prefix="/PROYECTO-FINAL")
     # indicamos la conexion con la base de datos
      dependencies=[Depends(get_db)],
     # informacion de lo que hace el endpont
-    summary="Create a new user"
+    summary="Creacion de un nuevo libro"
 )
 
 # funcion de el endpoint indicamos que es necesario recibir el modelo de en forma del cuerpo dela peticion
 def create_user(book: libro_schema.LibroBase = Body(...)):
     # description del endpoint para la el swugguer
     """
-    ###Agregar una nuevo libro
+    ### ¡'Agregar una nuevo libro
 
     ### Args
     La app podra recivir los siguientes pararametros en JSON

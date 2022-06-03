@@ -37,3 +37,4 @@ def create_user(user: usuario_schema.UserRegister):
         username = db_user.username,
         email = db_user.email
     )
+
