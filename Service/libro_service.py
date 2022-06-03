@@ -39,3 +39,5 @@ def create_book(book: libro_schema.LibroBase):
         autor = db_book.autor,
         FechaPublicacion = db_book.FechaPublicacion,
     )
+
+    
