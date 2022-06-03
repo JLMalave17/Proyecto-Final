@@ -13,14 +13,14 @@ class LibroBase(BaseModel):
         max_length=50,
         example="Titulo de ejemplo"
     )
-    # isbn: int = Field(
-    #     ..., 
-    #     min_length=13,
-    #     max_length=13,
-    #     example="123456789222"
+    isbn: str = Field(
+        ..., 
+        min_length=13,
+        max_length=13,
+        example="123456789222"
     
     
-    # )
+    )
     portada: str = Field(...)
 
     genero: str = Field(
@@ -38,7 +38,7 @@ class LibroBase(BaseModel):
   
     FechaPublicacion: datetime = Field(default=datetime.now())
 
-class Libro(BaseModel):
+class Libro(LibroBase):
     id: int = Field(
         ...,
         example="5"

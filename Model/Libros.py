@@ -10,9 +10,9 @@ class Tlibros(peewee.Model):
     titulo = peewee.CharField(unique=True, index=True)
     autor = peewee.CharField(unique=True, index=True)
     genero = peewee.CharField()
-    isbn = peewee.IntegerField()
+    isbn = peewee.CharField()
     portada = peewee.CharField()
-    fechaPublicacion = peewee.DateTimeField()
+    fechaPublicacion = peewee.DateTimeField(default=datetime.now)
     
     class Meta:
         database = db

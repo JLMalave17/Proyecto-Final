@@ -29,15 +29,19 @@ router = APIRouter(prefix="/PROYECTO-FINAL")
 def create_user(book: libro_schema.LibroBase = Body(...)):
     # description del endpoint para la el swugguer
     """
-    ## Crear un nuevo usuario
+    ###Agregar una nuevo libro
 
     ### Args
     La app podra recivir los siguientes pararametros en JSON
-    - email: Un email valido (la app lo comprobara)
-    - username:  Un nombre de usuario
-    - password: Una contraseña de autocomprobacion
+    - Titulo: Titulo del Libro
+    - Genero:  Genero del libro(Accion,aventuras,..)
+    - Autor: Nombre del autor
+    - Portada: URL de una imagen
+    - Fecha de publicacion:  fecha de publicacion del libro
+    - ISBN: codigo de identificacion del libro
+
 
     ### Returns
-    - Los datos del usuario 
+    - Mensaje de libro añadido y datos del libro
     """
     return libro_service.create_book(book)
