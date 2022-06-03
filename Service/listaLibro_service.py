@@ -67,7 +67,7 @@ def get_libros(user: usuario_schema.User, favorito: bool = None, leido: bool = N
 
     return lista_libros
 
-def get_usuarios(user: usuario_schema.User, favorito: bool = None, leido: bool = None, book: libro_schema.Libro):
+def get_usuarios( book: libro_schema.Libro, user: usuario_schema.User, favorito: bool = None, leido: bool = None):
 
     if(favorito is None):
         Libreria_Usuario = ListaModel.filter(ListaModel.libro_id == book.id).order_by(ListaModel.created_at.desc())

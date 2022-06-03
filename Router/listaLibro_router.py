@@ -53,5 +53,5 @@ def get_usuarios(
     libro: libro_schema.libroLista = Body(...)
     
 ):
-    return listaLibro_service.get_usuarios ( current_user, favorito, leido, libro )
+    return listaLibro_service.get_usuarios (libro ,current_user, favorito, leido)
 
