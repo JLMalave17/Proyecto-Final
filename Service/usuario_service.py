@@ -16,9 +16,9 @@ def create_user(user: usuario_schema.UserRegister):
 
     get_user = UserModel.filter((UserModel.email == user.email) | (UserModel.username == user.username)).first()
     if get_user:
-        msg = "Email already registered"
+        msg = "Email ya esta registrado"
         if get_user.username == user.username:
-            msg = "Username already registered"
+            msg = "Usuario ya registrado"
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=msg

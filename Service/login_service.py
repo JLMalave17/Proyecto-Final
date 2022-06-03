@@ -20,7 +20,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = settings.token_expire
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/PROYECTO-FINAL/login")
 
 
 def verify_password(plain_password, password):

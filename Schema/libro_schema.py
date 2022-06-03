@@ -6,6 +6,19 @@ from pydantic import BaseModel
 from pydantic import Field
 
 
+class libroLista(BaseModel):
+     id: int = Field(
+        ...,
+        example="5"
+    )
+
+
+
+
+
+
+
+
 class LibroBase(BaseModel):
     titulo: str = Field(
         ...,
