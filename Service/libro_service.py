@@ -1,9 +1,9 @@
 from fastapi import HTTPException, status
-from passlib.context import CryptContext
 # importamos los modelas de la base de datos
 from Model.Libros import Tlibros as BookModel
 # importamos modelo de ususarios para validar datos
 from Schema import libro_schema
+from Schema import usuario_schema
 
 
 
@@ -40,4 +40,42 @@ def create_book(book: libro_schema.LibroBase):
         FechaPublicacion = db_book.FechaPublicacion,
     )
 
+
+
+
+
+
+
+
+def get_libros(libro_id):
+
+    libro = BookModel.filter(BookModel.id == libro_id).first()
+    if not libro :
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Libro no encontrado en la BD"
+            )
+
+  
+
+    return libro_schema.Libro(   
+        id=libro_id,     
+        titulo = libro.titulo,
+        isbn = libro.isbn,
+        portada = libro.portada,
+        genero = libro.genero,
+        autor = libro.autor,
+        # FechaPublicacion = libro.FechaPublicacion
+)
+
     
+
+def delete_libro(libro_id: int):
+    libro = BookModel.filter(BookModel.id == libro_id).first()
+    if not libro :
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Libro no encontrado en la BD"
+            )
+
+    libro.delete_instance()

@@ -1,13 +1,13 @@
 from fastapi import HTTPException, status
-from Model.Usuarios import Tuser
+
 
 from Schema import listaLibro_schema
 from Schema import libro_schema
 from Schema import usuario_schema
 
 from Model.ListaLibros import TlistaLibros as ListaModel
-from Model.Libros import Tlibros
-
+from Model.Libros import Tlibros as LibrosModel
+from Model.Usuarios import Tuser as UsuarioModel
 # def get(book: libro_schema.libroLista):
 
     
@@ -24,8 +24,14 @@ from Model.Libros import Tlibros
 #     return libro
 
 def create_list(book: libro_schema.libroLista, user: usuario_schema.User):
-    # b = get (book)
+    lista = ListaModel.filter((ListaModel.libro_id == book.id) & (ListaModel.usuario_id == user.id)).first()
 
+    if lista:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Ya esta agragado en la librera"
+        )
+ 
     db_list = ListaModel(      
         usuario_id = user.id,
         libro_id=book.id,
@@ -40,66 +46,277 @@ def create_list(book: libro_schema.libroLista, user: usuario_schema.User):
         favorito = db_list.favorito,
         leido = db_list.estadoLibro
     )
+
+
+
+
+
+
+
+
+
 def get_libros(user: usuario_schema.User, favorito: bool = None, leido: bool = None):
 
-    if(favorito is None):
-        Libreria_Usuario = ListaModel.filter(ListaModel.user_id == user.id).order_by(ListaModel.created_at.desc())
-    else:
-        Libreria_Usuario = ListaModel.filter((ListaModel.user_id == user.id) & (ListaModel.favorito == favorito)).order_by(ListaModel.created_at.desc())
+    if((favorito is None) and (leido is None) ):
+        Libreria_Usuario = ListaModel.filter(ListaModel.usuario_id == user.id).first()
+        if not Libreria_Usuario:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Usuario no tiene libros en la estanteria"
+            )
+    elif((favorito is not None) and (leido is None)):
+        Libreria_Usuario = ListaModel.filter((ListaModel.usuario_id == user.id) & (ListaModel.favorito == favorito)).first()
+        if(favorito == False):
+            if not Libreria_Usuario:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Usuario no tiene libros en la estanteria que no sean favoritos"
+                )
+        else:
+            if not Libreria_Usuario:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Usuario no tiene libros en la estanteria que sean favoritos"
+                )
+
+    elif((favorito is None) and (leido is not None)):
+        Libreria_Usuario = ListaModel.filter((ListaModel.usuario_id == user.id) & (ListaModel.estadoLibro == leido)).first()
+        if(leido == False):
+            if not Libreria_Usuario:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Usuario no tiene libros en la estanteria que no esten leidos"
+                )
+        else:
+            if not Libreria_Usuario:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Usuario no tiene libros en la estanteria que esten leidos"
+                )
+
+    elif((favorito is not None) and (leido is not None)):
+        Libreria_Usuario = ListaModel.filter((ListaModel.usuario_id == libro) & (ListaModel.favorito == favorito) & (ListaModel.estadoLibro == leido)).first()
+        if((favorito == False) and (leido == False)):
+            if not Libreria_Usuario:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Usuario no tiene libros en la estanteria que no sean favoritos y no esten leidos"
+                )
+        elif((favorito == True) and (leido == False)):
+            if not Libreria_Usuario:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                )
+        elif((favorito == False) and (leido == True)):
+            if not Libreria_Usuario:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Usuario no tiene libros en la estanteria que no sean favoritos y que esten leidos"
+                )
+        elif((favorito == True) and (leido == True)):
+            if not Libreria_Usuario:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Usuario no tiene libros en la estanteria que sean favoritos y que esten leidos"
+                )
+        
 
     lista_libros = []
     for estanteria in Libreria_Usuario:
-        a = Tlibros.filter(Tlibros.id == estanteria.libro_id)
+        libro = LibrosModel.filter(LibrosModel.id == estanteria.libro_id).first()
         lista_libros.append(
             listaLibro_schema.ListaUsario(
-                titulo = a.titulo,
+                titulo = libro.titulo,
                 favorito = estanteria.favorito,
                 leido = estanteria.leido,
-                isbn = a.isbn,
-                portada = a.portada,
-                genero = a.genero,
-                autor = a.autor,
-                FechaPublicacion = a.FechaPublicacion,
-
-               
+                isbn = libro.isbn,
+                portada = libro.portada,
+                genero = libro.genero,
+                autor = libro.autor,
+                FechaPublicacion = libro.FechaPublicacion
             )
         )
 
     return lista_libros
 
-def get_usuarios( book: libro_schema.Libro, user: usuario_schema.User, favorito: bool = None, leido: bool = None):
 
-    if(favorito is None):
-        Libreria_Usuario = ListaModel.filter(ListaModel.libro_id == book.id).order_by(ListaModel.created_at.desc())
-    else:
-        Libreria_Usuario = ListaModel.filter((ListaModel.libro_id == book.id) & (ListaModel.favorito == favorito)).order_by(ListaModel.created_at.desc())
 
+
+
+
+
+
+
+def get_usuarios( libro , user: usuario_schema.User, favorito: bool = None, leido: bool = None):
+
+    if((favorito is None) and (leido is None) ):
+        Libreria_Usuario = ListaModel.filter(ListaModel.libro_id == libro).first()
+        if not Libreria_Usuario:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Usuario no tiene libros en la estanteria"
+            )
+    elif((favorito is not None) and (leido is None)):
+        Libreria_Usuario = ListaModel.filter((ListaModel.libro_id == libro) & (ListaModel.favorito == favorito)).first()
+        if(favorito == False):
+            if not Libreria_Usuario:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Usuario no tiene libros en la estanteria que no sean favoritos"
+                )
+        else:
+            if not Libreria_Usuario:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Usuario no tiene libros en la estanteria que sean favoritos"
+                )
+
+    elif((favorito is None) and (leido is not None)):
+        Libreria_Usuario = ListaModel.filter((ListaModel.libro_id == libro) & (ListaModel.estadoLibro == leido)).first()
+        if(leido == False):
+            if not Libreria_Usuario:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Usuario no tiene libros en la estanteria que no esten leidos"
+                )
+        else:
+            if not Libreria_Usuario:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Usuario no tiene libros en la estanteria que esten leidos"
+                )
+
+    elif((favorito is not None) and (leido is not None)):
+        Libreria_Usuario = ListaModel.filter((ListaModel.libro_id == libro) & (ListaModel.favorito == favorito) & (ListaModel.estadoLibro == leido)).first()
+        if((favorito == False) and (leido == False)):
+            if not Libreria_Usuario:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Usuario no tiene libros en la estanteria que no sean favoritos y no esten leidos"
+                )
+        elif((favorito == True) and (leido == False)):
+            if not Libreria_Usuario:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Usuario no tiene libros en la estanteria que  sean favoritos y que esten leidos"
+                )
+        elif((favorito == False) and (leido == True)):
+            if not Libreria_Usuario:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Usuario no tiene libros en la estanteria que no sean favoritos y que esten leidos"
+                )
+        elif((favorito == True) and (leido == True)):
+            if not Libreria_Usuario:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Usuario no tiene libros en la estanteria que sean favoritos y que esten leidos"
+                )
+        
+
+
+    
     lista_libros = []
     for estanteria in Libreria_Usuario:
-        a = Tuser.filter(Tuser.id == estanteria.usuario_id)
+        usuarioLista = UsuarioModel.filter(UsuarioModel.id == estanteria.usuario_id).first()
         lista_libros.append(
-            listaLibro_schema.ListaUsario(
-                username = a.username,
+            listaLibro_schema.ListaLibros(
+                username = usuarioLista.username,
                 favorito = estanteria.favorito,
                 leido =  estanteria.leido
             )
         )
 
+
     return lista_libros
-# def get_libro(libro_id: int, user: usuario_schema.User):
-#     libro = TodoModel.filter((TodoModel.id == libro_id) & (TodoModel.user_id == user.id)).first()
 
-#     if not libro:
-#         raise HTTPException(
-#             status_code=status.HTTP_404_NOT_FOUND,
-#             detail="libro not found"
-#         )
 
-#     return todo_schema.Todo(
-#         id = libro.id,
-#         title = libro.title,
-#         is_done = libro.is_done,
-#         created_at = libro.created_at
-#     )
+
+
+
+
+
+def update_status_favorito(favorito: bool, libro_id: int, user: usuario_schema.User):
+    lista = ListaModel.filter((ListaModel.libro_id == libro_id) & (ListaModel.usuario_id == user.id)).first()
+    book = LibrosModel.filter((LibrosModel.id == libro_id)).first()
+    if not lista:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Libro no encontrado en la estanteria"
+        )
+
+    lista.favorito = favorito
+    lista.save()
+
+    return listaLibro_schema.ListaLibro_Usuario(
+    username = user.username,
+    titulo = book.titulo,
+    favorito = lista.favorito,
+    leido = lista.estadoLibro
+
+    )
+
+
+
+
+
+
+
+
+
+
+
+
+def update_status_leido(leido: bool, libro_id: int, user: usuario_schema.User):
+    lista = ListaModel.filter((ListaModel.libro_id == libro_id) & (ListaModel.usuario_id == user.id)).first()
+    book = LibrosModel.filter((LibrosModel.id == libro_id)).first()
+    if not lista:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Libro no encontrado en la estanteria"
+        )
+
+    lista.estadoLibro = leido
+    lista.save()
+
+    return listaLibro_schema.ListaLibro_Usuario(
+    username = user.username,
+    titulo = book.titulo,
+    favorito = lista.favorito,
+    leido = lista.estadoLibro
+
+
+
+    )
+
+
+
+
+
+
+
+
+
+
+
+
+
+def delete_lista(libro_id: int, user: usuario_schema.User):
+    lista = ListaModel.filter((ListaModel.libro_id == libro_id) & (ListaModel.usuario_id == user.id)).first()
+    if not lista:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="lista no encontrada"
+        )
+
+    lista.delete_instance()
+
+
+
+
+
+
+
+
         
     

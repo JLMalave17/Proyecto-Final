@@ -20,6 +20,27 @@ class ListaLibros(BaseModel):
     favorito: bool = Field(default=False)
     leido: bool = Field(default=False)
 
+
+class ListaLibro_Usuario(BaseModel):
+    username: str = Field(
+        ...,
+        min_length=3,
+        max_length=50,
+        example="EjemploNombre"
+    )
+    titulo: str = Field(
+        ...,
+        min_length=3,
+        max_length=50,
+        example="Titulo de ejemplo"
+    )
+  
+    favorito: bool = Field(default=False)
+    leido: bool = Field(default=False)
+
+
+
+
 class ListaUsario(BaseModel):
     titulo: str = Field(
         ...,
