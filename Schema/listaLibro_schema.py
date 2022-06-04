@@ -48,7 +48,7 @@ class ListaUsario(BaseModel):
         max_length=50,
         example="Titulo de ejemplo"
     )
-    id: int = Field(...)
+
     favorito: bool = Field(default=False)
     leido: bool = Field(default=False)
     isbn: str = Field(

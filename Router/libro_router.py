@@ -52,21 +52,30 @@ def create_user(book: libro_schema.LibroBase = Body(...)):
 
 
 
-
+# declaramos el tipo del endpont en este caso post metadatos para el swugguer
 @router.get(
+#  en esta ruta indicamos que vendar un parametro por la ruta
     "/{libro_id}",
+    # agrupacion en la documentacion
     tags=["Libros"],
+     # codigo de devolucion cuando se efectua corectamente
     status_code=status.HTTP_200_OK,
+     # indicamos el modelo de respuesta
     response_model=libro_schema.Libro,
-    dependencies=[Depends(get_db)]
+     # indicamos la conexion con la base de datos
+    dependencies=[Depends(get_db)],
+        # informacion de lo que hace el endpont
+    summary="Buscar un libro por id"
 )
 def get_libros(
+    # indicamos el tipo de dato que recibiremos en la ruta 
     libro_id: int = Path(
         ...,
         gt=0
     ),
     
 ):
+# indicamos la funcion que llamamos
     return libro_service.get_libros(libro_id)
 
 
@@ -75,7 +84,8 @@ def get_libros(
     "/{libro_id}",
     tags=["Libros"],
     status_code=status.HTTP_200_OK,
-    dependencies=[Depends(get_db)]
+    dependencies=[Depends(get_db)],
+    summary="Borrar libro or id"
 )
 def delete_libro(
     libro_id: int = Path(

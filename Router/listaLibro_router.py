@@ -13,14 +13,21 @@ from Schema.usuario_schema import User
 from Service.login_service import get_current_user
 
 
+# definimos ruta de la api
 router = APIRouter(prefix="/PROYECTO-FINAL")
-
+# declaramos el tipo del endpont en este caso post metadatos para el swugguer
 @router.post(
     "/lista",
+     # agrupacion en la documentacion
     tags=["Lista"],
+     # codigo de devolucion cuando se efectua corectamente
     status_code=status.HTTP_201_CREATED,
+      # indicamos el modelo de respuesta
     response_model=listaLibro_schema.Lista,
-    dependencies=[Depends(get_db)]
+      # indicamos la conexion con la base de datos
+    dependencies=[Depends(get_db)],
+       # informacion de lo que hace el endpont
+    summary="Creacion de una relacion ususario libro"
 )
 def create_list(libro: libro_schema.libroLista = Body(...), current_user: User = Depends(get_current_user)):
     return listaLibro_service.create_list(libro, current_user)
@@ -36,7 +43,9 @@ def create_list(libro: libro_schema.libroLista = Body(...), current_user: User =
     tags=["Lista"],
     status_code=status.HTTP_200_OK,
     response_model=List[listaLibro_schema.ListaUsario],
-    dependencies=[Depends(get_db)]
+    dependencies=[Depends(get_db)],
+        # informacion de lo que hace el endpont
+    summary="Mostar los libros que tenga agregado el usuario a su lista de libros"
 )
 def get_libros(
     favorito: Optional[bool] = Query(None),
@@ -59,8 +68,11 @@ def get_libros(
     tags=["Lista"],
     status_code=status.HTTP_200_OK,
     response_model=List[listaLibro_schema.ListaLibros],
-    dependencies=[Depends(get_db)]
+    dependencies=[Depends(get_db)],
+         # informacion de lo que hace el endpont
+    summary="Mostar los usuarios que tenga agregado el libro a su lista de libros"
 )
+
 def get_usuarios(
     libro_id: int = Path(
         ...,
@@ -88,8 +100,11 @@ def get_usuarios(
     tags=["Lista"],
     status_code=status.HTTP_200_OK,
     response_model=listaLibro_schema.ListaLibro_Usuario,
-    dependencies=[Depends(get_db)]
+    dependencies=[Depends(get_db)],
+         # informacion de lo que hace el endpont
+    summary="Cambiar el atributo favorito a verdadero "
 )
+
 def favorito(
     libro_id: int = Path(
         ...,
@@ -114,7 +129,8 @@ def favorito(
     tags=["Lista"],
     status_code=status.HTTP_200_OK,
     response_model=listaLibro_schema.ListaLibro_Usuario,
-    dependencies=[Depends(get_db)]
+    dependencies=[Depends(get_db)],
+    summary="Cambiar el atributo favorito a falso "
 )
 def no_favorito(
     libro_id: int = Path(
@@ -137,7 +153,8 @@ def no_favorito(
     tags=["Lista"],
     status_code=status.HTTP_200_OK,
     response_model=listaLibro_schema.ListaLibro_Usuario,
-    dependencies=[Depends(get_db)]
+    dependencies=[Depends(get_db)],
+     summary="Cambiar el atributo leido a verdadero "
 )
 def favorito(
     libro_id: int = Path(
@@ -161,7 +178,8 @@ def favorito(
     tags=["Lista"],
     status_code=status.HTTP_200_OK,
     response_model=listaLibro_schema.ListaLibro_Usuario,
-    dependencies=[Depends(get_db)]
+    dependencies=[Depends(get_db)],
+    summary="Cambiar el atributo leido a falso "
 )
 def no_favorito(
     libro_id: int = Path(
@@ -187,7 +205,8 @@ def no_favorito(
     "/Borrar_lista/{libro_id}",
     tags=["Lista"],
     status_code=status.HTTP_200_OK,
-    dependencies=[Depends(get_db)]
+    dependencies=[Depends(get_db)],
+    summary="Borrar libro de lisata de usuario por el id del libro "
 )
 def delete_lista(
     libro_id: int = Path(

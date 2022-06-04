@@ -43,7 +43,7 @@ def authenticate_user(username: str, password: str):
         return False
     return user
 
-
+# creamos el token de acceso importandon SECRET_KEY y ALGORITHM del archivo .env
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
     if expires_delta:

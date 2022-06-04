@@ -58,14 +58,14 @@ def create_list(book: libro_schema.libroLista, user: usuario_schema.User):
 def get_libros(user: usuario_schema.User, favorito: bool = None, leido: bool = None):
 
     if((favorito is None) and (leido is None) ):
-        Libreria_Usuario = ListaModel.filter(ListaModel.usuario_id == user.id).first()
+        Libreria_Usuario = ListaModel.filter(ListaModel.usuario_id == user.id)
         if not Libreria_Usuario:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Usuario no tiene libros en la estanteria"
             )
     elif((favorito is not None) and (leido is None)):
-        Libreria_Usuario = ListaModel.filter((ListaModel.usuario_id == user.id) & (ListaModel.favorito == favorito)).first()
+        Libreria_Usuario = ListaModel.filter((ListaModel.usuario_id == user.id) & (ListaModel.favorito == favorito))
         if(favorito == False):
             if not Libreria_Usuario:
                 raise HTTPException(
@@ -80,7 +80,7 @@ def get_libros(user: usuario_schema.User, favorito: bool = None, leido: bool = N
                 )
 
     elif((favorito is None) and (leido is not None)):
-        Libreria_Usuario = ListaModel.filter((ListaModel.usuario_id == user.id) & (ListaModel.estadoLibro == leido)).first()
+        Libreria_Usuario = ListaModel.filter((ListaModel.usuario_id == user.id) & (ListaModel.estadoLibro == leido))
         if(leido == False):
             if not Libreria_Usuario:
                 raise HTTPException(
@@ -95,7 +95,7 @@ def get_libros(user: usuario_schema.User, favorito: bool = None, leido: bool = N
                 )
 
     elif((favorito is not None) and (leido is not None)):
-        Libreria_Usuario = ListaModel.filter((ListaModel.usuario_id == libro) & (ListaModel.favorito == favorito) & (ListaModel.estadoLibro == leido)).first()
+        Libreria_Usuario = ListaModel.filter((ListaModel.usuario_id == libro) & (ListaModel.favorito == favorito) & (ListaModel.estadoLibro == leido))
         if((favorito == False) and (leido == False)):
             if not Libreria_Usuario:
                 raise HTTPException(
@@ -126,14 +126,15 @@ def get_libros(user: usuario_schema.User, favorito: bool = None, leido: bool = N
         libro = LibrosModel.filter(LibrosModel.id == estanteria.libro_id).first()
         lista_libros.append(
             listaLibro_schema.ListaUsario(
+                
                 titulo = libro.titulo,
                 favorito = estanteria.favorito,
-                leido = estanteria.leido,
+                leido = estanteria.estadoLibro,
                 isbn = libro.isbn,
                 portada = libro.portada,
                 genero = libro.genero,
                 autor = libro.autor,
-                FechaPublicacion = libro.FechaPublicacion
+                FechaPublicacion = libro.fechaPublicacion
             )
         )
 
@@ -150,14 +151,14 @@ def get_libros(user: usuario_schema.User, favorito: bool = None, leido: bool = N
 def get_usuarios( libro , user: usuario_schema.User, favorito: bool = None, leido: bool = None):
 
     if((favorito is None) and (leido is None) ):
-        Libreria_Usuario = ListaModel.filter(ListaModel.libro_id == libro).first()
+        Libreria_Usuario = ListaModel.filter(ListaModel.libro_id == libro)
         if not Libreria_Usuario:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Usuario no tiene libros en la estanteria"
             )
     elif((favorito is not None) and (leido is None)):
-        Libreria_Usuario = ListaModel.filter((ListaModel.libro_id == libro) & (ListaModel.favorito == favorito)).first()
+        Libreria_Usuario = ListaModel.filter((ListaModel.libro_id == libro) & (ListaModel.favorito == favorito))
         if(favorito == False):
             if not Libreria_Usuario:
                 raise HTTPException(
@@ -172,7 +173,7 @@ def get_usuarios( libro , user: usuario_schema.User, favorito: bool = None, leid
                 )
 
     elif((favorito is None) and (leido is not None)):
-        Libreria_Usuario = ListaModel.filter((ListaModel.libro_id == libro) & (ListaModel.estadoLibro == leido)).first()
+        Libreria_Usuario = ListaModel.filter((ListaModel.libro_id == libro) & (ListaModel.estadoLibro == leido))
         if(leido == False):
             if not Libreria_Usuario:
                 raise HTTPException(
@@ -187,7 +188,7 @@ def get_usuarios( libro , user: usuario_schema.User, favorito: bool = None, leid
                 )
 
     elif((favorito is not None) and (leido is not None)):
-        Libreria_Usuario = ListaModel.filter((ListaModel.libro_id == libro) & (ListaModel.favorito == favorito) & (ListaModel.estadoLibro == leido)).first()
+        Libreria_Usuario = ListaModel.filter((ListaModel.libro_id == libro) & (ListaModel.favorito == favorito) & (ListaModel.estadoLibro == leido))
         if((favorito == False) and (leido == False)):
             if not Libreria_Usuario:
                 raise HTTPException(
@@ -223,7 +224,7 @@ def get_usuarios( libro , user: usuario_schema.User, favorito: bool = None, leid
             listaLibro_schema.ListaLibros(
                 username = usuarioLista.username,
                 favorito = estanteria.favorito,
-                leido =  estanteria.leido
+                leido =  estanteria.estadoLibro
             )
         )
 
