@@ -8,20 +8,7 @@ from Schema import usuario_schema
 from Model.ListaLibros import TlistaLibros as ListaModel
 from Model.Libros import Tlibros as LibrosModel
 from Model.Usuarios import Tuser as UsuarioModel
-# def get(book: libro_schema.libroLista):
 
-    
-#     L = Tlibros.filter(Tlibros.isbn == book.isbn)
-    
-    
-    
-#     libro = libro_schema.Librolista2(
-#                 id = L.id,
-#                 isbn = L.isbn,  
-#     )
-        
-
-#     return libro
 
 def create_list(book: libro_schema.libroLista, user: usuario_schema.User):
     lista = ListaModel.filter((ListaModel.libro_id == book.id) & (ListaModel.usuario_id == user.id)).first()

@@ -70,12 +70,3 @@ def get_libros(libro_id):
 
     
 
-def delete_libro(libro_id: int):
-    libro = BookModel.filter(BookModel.id == libro_id).first()
-    if not libro :
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Libro no encontrado en la BD"
-            )
-
-    libro.delete_instance()

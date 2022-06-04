@@ -80,25 +80,6 @@ def get_libros(
 
 
 
-@router.delete(
-    "/{libro_id}",
-    tags=["Libros"],
-    status_code=status.HTTP_200_OK,
-    dependencies=[Depends(get_db)],
-    summary="Borrar libro or id"
-)
-def delete_libro(
-    libro_id: int = Path(
-        ...,
-        gt=0
-    ),
-    
-):
-    libro_service.delete_libro(libro_id)
-
-    return {
-        'msg': 'Borrado de forma correcta'
-    }
 
 
 
