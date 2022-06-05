@@ -82,7 +82,7 @@ def get_libros(user: usuario_schema.User, favorito: bool = None, leido: bool = N
                 )
 
     elif((favorito is not None) and (leido is not None)):
-        Libreria_Usuario = ListaModel.filter((ListaModel.usuario_id == libro) & (ListaModel.favorito == favorito) & (ListaModel.estadoLibro == leido))
+        Libreria_Usuario = ListaModel.filter((ListaModel.usuario_id == user.id) & (ListaModel.favorito == favorito) & (ListaModel.estadoLibro == leido))
         if((favorito == False) and (leido == False)):
             if not Libreria_Usuario:
                 raise HTTPException(
